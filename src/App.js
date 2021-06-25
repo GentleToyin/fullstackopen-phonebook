@@ -1,15 +1,27 @@
 import React, { useState } from 'react'
+import Filter from "./components/Filter";
+import Form from "./components/form";
 
 const App = () => {
- 
+  const [ newSearch, setNewSearch ] = useState('')
+  const [ newPersonSearch, setNewPersonSearch ] = useState('')
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ persons, setPersons ] = useState([
     { name: 'Arto Hellas',
       number:'0801111111'
     } 
-
   ]) 
+
+  const handleSearch = (event)=>{
+    setNewSearch(event.target.value);
+    if(event.target.value){
+      setNewPersonSearch(persons.filter((person)=>person.name.toLowerCase().includes(newSearch))
+        );
+    } else{
+      setNewPersonSearch([])
+    }
+  }
 
   const handleNameChange=(event)=>{
     setNewName(event.target.value)
@@ -17,10 +29,12 @@ const App = () => {
    const handleNumberChange=(event)=>{
     setNewNumber(event.target.value)
   }
+
+  const duplicate = persons.find(obj => obj.name===newName);
  
-  const addName=(event)=>{
+  const addPerson=(event)=>{
     event.preventDefault()
-    if(filter){
+    if(duplicate){
         console.log(`${newName} is already there`)
       }
     else{
@@ -30,31 +44,18 @@ const App = () => {
         }
         setPersons(persons.concat(newNameObject))
         setNewName('')
+        setNewNumber('')
     }  
   }
 
  
   const nameList = persons.map(person=> <ul>{person.name} {person.number}</ul>)
-  const filter = persons.find(obj => obj.name===newName);
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          name: <input
-          value = {newName}
-          onChange={handleNameChange} />
-        </div>
-         <div>
-          number: <input
-          value = {newNumber}
-          onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button onClick= {addName} type="submit">add</button>
-        </div>
-      </form>
+      <Form newName={newName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} newNumber={newNumber} addPerson={addPerson} />
+      <Filter newSearch={newSearch} handleSearch={handleSearch} newPersonSearch={newPersonSearch} />
       <h2>Numbers</h2>
       ...
 
